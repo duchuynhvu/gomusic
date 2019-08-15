@@ -1,15 +1,25 @@
 package dblayer
 
-import "models"
+import (
+	"errors"
+	"models"
+)
 
+//ErrINVALIDPASSWORD - invalid password error
+var ErrINVALIDPASSWORD = errors.New("Invalid password")
+
+//DBLayer - DBlayer interface
 type DBLayer interface {
 	GetAllProducts() ([]models.Product, error)
-	GetAllPromos() ([]models.Product, error)
+	GetPromos() ([]models.Product, error)
 	GetCustomerByName(string, string) (models.Customer, error)
 	GetCustomerByID(int) (models.Customer, error)
 	GetProduct(uint) (models.Product, error)
 	AddUser(models.Customer) (models.Customer, error)
 	SignInUser(username, password string) (models.Customer, error)
 	SignOutUserById(int) error
-	GetCustomerOrderByID(int) ([]models.Order, error)
+	GetCustomerOrdersByID(int) ([]models.Order, error)
+	AddOrder(models.Order) error
+	GetCreditCardCID(int) (string, error)
+	SaveCreditCardForCustomer(int, string) error
 }

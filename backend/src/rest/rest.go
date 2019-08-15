@@ -9,7 +9,7 @@ func RunAPI(address string) error {
 	//get gin's default engine
 	r := gin.Default()
 	//define a handler
-	h, _ := NewHandler()
+	h, _ := NewHandler("sql", "root:/gomusic")
 	//get products
 	r.GET("/products", h.GetProducts)
 	//get promos
