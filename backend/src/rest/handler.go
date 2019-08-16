@@ -40,6 +40,11 @@ func NewHandler(dbtype, constring string) (HandlerInterface, error) {
 	}, nil
 }
 
+//NewHandlerWithDB - contructor with db
+func NewHandlerWithDB(db dblayer.DBLayer) HandlerInterface {
+	return &Handler{db: db}
+}
+
 //GetProducts will retrieve a Handler pointer and
 //return a list of all products to the client
 func (h *Handler) GetProducts(c *gin.Context) {
@@ -124,7 +129,7 @@ func (h *Handler) SignOut(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err = h.db.SignOutUserById(id)
+	err = h.db.SignOutUserByID(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -145,7 +150,7 @@ func (h *Handler) GetOrders(c *gin.Context) {
 		return
 	}
 	//call the database layer method to get orders from id
-	orders, err := h.db.GetCustomerOrderByID(id)
+	orders, err := h.db.GetCustomerOrdersByID(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
