@@ -70,6 +70,37 @@ class CreditCardForm extends React.Component {
             </div>
         );
     }
+    handleInputChange(event) {
+        this.setState({
+            value: event.target.value
+        });
+    }
+    async handleSubmit(event) {
+        event.preventDefault();
+        console.log("Handle submit called, with name: " + this.state.value);
+
+        //retrieve the token via Stripe's API
+        let { token } = await this.props.stripe.createToken({ name: this.state.value });
+        if (token == null) {
+            console.log("invalid token");
+            this.setState({ status: FAILEDSTATE });
+            return;
+        }
+
+        let response = await fetch("/charge", {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({
+                token: token.id,
+                operation: this.props.operation,
+            })
+        });
+        console.log(response.ok);
+        if (response.ok) {
+            console.log("Purchase Complete!");
+            this.setState({ status: SUCCESSSTATE });
+        }
+    }
     render() {
         let body = null;
         switch (this.state.status) {
@@ -88,35 +119,23 @@ class CreditCardForm extends React.Component {
             </div>
         );
     }
-    handleInputChange(event) {
-        this.setState({
-            value: event.target.value
-        });
-    }
-    async handleSubmit(event){
-        event.preventDefault();
-        console.log("Handle submit called, with name: " + this.state.value);
+}
 
-        //retrieve the token via Stripe's API
-         let { token } = await this.props.stripe.createToken({ name: this.state.value });
-        if (token == null) {
-            console.log("invalid token");
-            this.setState({ status: FAILEDSTATE });
-            return;
-        }
-        
-        let response = await fetch("/charge", {
-            method: "POST",
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({
-                token: token.id,
-                operation: this.props.operation,
-            })
-        });
-        console.log(response.ok);
-        if (response.ok) {
-            console.log("Purchase Complete!");
-            this.setState({ status: SUCCESSSTATE });
-        }
+export default function CreditCardInformation(props) {
+    if (!props.show) {
+        return <div />;
     }
+    //inject our CreditCardForm component with stripe code in order to be able to make use of the createToken() method
+    const CCFormWithStripe = injectStripe(CreditCardForm);
+    return (
+        <div>
+            {/*stripe provider*/}
+            <StripeProvider apiKey="pk_test_LwL4RUtinpP3PXzYirX2jNfR">
+                <Elements>
+                    {/*embed our credit card form*/}
+                    <CCFormWithStripe operation={props.operation} />
+                </Elements>
+            </StripeProvider>
+        </div>
+    );
 }
