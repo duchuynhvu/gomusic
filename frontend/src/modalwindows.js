@@ -26,10 +26,15 @@ export class SignInModalWindow extends React.Component {
         };
         this.handleNewUser = this.handleNewUser.bind(this);
     }
+    handleNewUser() {
+        this.setState({
+            showRegistrationForm: true
+        });
+    }
     render() {
         let modalBody = <SignInForm handleNewUser={this.handleNewUser} />
         if (this.state.showRegistrationForm === true) {
-            modalBody = <RegisterationForm />
+            modalBody = <RegistrationForm />
         }
         return (
             <Modal id="register" tabIndex="-1" role="dialog" isOpen={this.props.showModal} toggle={this.props.toggle}>
@@ -50,14 +55,14 @@ export class SignInModalWindow extends React.Component {
 }
 
 class SignInForm extends React.Component {
-    constructor() {
+    constructor(props) {
         super(props);
         //this method will get called whenever a user input data into our form
         this.handleChange = this.handleChange.bind(this);
         //this method will get called whenever the HTML form gets submitted
         this.handleSubmit = this.handleSubmit.bind(this);
         this.state = {
-            errormessage = ''
+            errormessage: ''
         };
     }
     handleChange(event) {
@@ -102,7 +107,7 @@ class SignInForm extends React.Component {
     }
 }
 
-class Registeration extends React.Component {
+class RegistrationForm extends React.Component {
     constructor(props) {
         super(props);
         this.handleSubmit = this.handleSubmit.bind(this);

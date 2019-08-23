@@ -1,6 +1,8 @@
 import React from 'react';
 import { injectStripe, StripeProvider, Elements, CardElement } from 'react-stripe-elements';
 
+const INITIALSTATE = "INITIAL", SUCCESSSTATE = "COMPLETE", FAILEDSTATE = "FAILED";
+
 class CreditCardForm extends React.Component {
     constructor(props) {
         super(props);

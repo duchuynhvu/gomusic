@@ -12,9 +12,10 @@ class Card extends React.Component {
 
                     <div className="card-body">
                         <h4 className="card-title">{this.props.productname}</h4>
-                        Price: <strong className={priceColor}>{sellprice}</strong>
+                        Price: <strong className={priceColor}>{sellPrice}</strong>
                         <p className="card-text">{this.props.desc}</p>
-                        <a className="btn btn-success text-white" onClick={() => { this.props.showBuyModal(this.props.ID, sellPrice) }}>Buy</a>
+                        <a className="btn btn-success text-white" 
+                            onClick={() => { this.props.showBuyModal(this.props.ID, sellPrice) }}>Buy</a>
                     </div>
                 </div>
             </div>
