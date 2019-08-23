@@ -26,3 +26,19 @@ function Order(props) {
         </div>
     );
 }
+
+export default class OrderContainer extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            orders: []
+        };
+    }
+    render() {
+        return (
+            <div className="row mt-5">
+                {this.state.orders.map(order => <Order key={order.id} {...order} />)}
+            </div>
+        );
+    }
+}
