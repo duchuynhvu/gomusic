@@ -18,6 +18,37 @@ export function BuyModalWindow(props) {
     );
 }
 
+export class SignInModalWindow extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            showRegistrationForm: false
+        };
+        this.handleNewUser = this.handleNewUser.bind(this);
+    }
+    render() {
+        let modalBody = <SignInForm handleNewUser={this.handleNewUser} />
+        if (this.state.showRegistrationForm === true) {
+            modalBody = <RegisterationForm />
+        }
+        return (
+            <Modal id="register" tabIndex="-1" role="dialog" isOpen={this.props.showModal} toggle={this.props.toggle}>
+                <div role="document">
+                    <ModalHeader toggle={this.props.toggle} className="bg-success text-white">
+                        Sign in
+                    {/*<button className="close">
+                    <span aria-hidden="true">&times;</span>
+                     </button>*/}
+                    </ModalHeader>
+                    <ModalBody>
+                        {modalBody}
+                    </ModalBody>
+                </div>
+            </Modal>
+        );
+    }
+}
+
 class SignInForm extends React.Component {
     constructor() {
         super(props);
