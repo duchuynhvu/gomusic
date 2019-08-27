@@ -95,7 +95,10 @@ func (db DBORM) SignOutUserByID(id int) error {
 
 //GetCustomerOrdersByID - get customer orders by ID
 func (db *DBORM) GetCustomerOrdersByID(id int) (orders []models.Order, err error) {
-	return orders, db.Table("orders").Select("*").Joins("join customers on customers.id = customer_id").Joins("join products on products.id = product_id").Where("customer_id=?", id).Scan(&orders).Error
+	return orders, db.Table("orders").Select("*").
+		Joins("join customers on customers.id = customer_id").
+		Joins("join products on products.id = product_id").
+		Where("customer_id=?", id).Scan(&orders).Error
 }
 
 //AddOrder - add the order to the orders table
@@ -117,7 +120,6 @@ func (db *DBORM) SaveCreditCardForCustomer(id int, ccid string) error {
 	result := db.Table("customers").Where("id=?", id)
 	return result.Update("cc_customerid", ccid).Error
 }
-
 
 func hashPassword(s *string) error {
 	if s == nil {

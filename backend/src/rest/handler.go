@@ -178,7 +178,7 @@ func (h *Handler) Charge(c *gin.Context) {
 		return
 	}
 	//declare the stripe API key
-	stripe.Key = "pk_test_cQh5dFyiQq2aVrm7aoHioKLd00qOXnE5oT"
+	stripe.Key = "pk_test_LwL4RUtinpP3PXzYirX2jNfR"
 	//create the object to take information about our transaction
 	chargeP := &stripe.ChargeParams{
 		//the price we obtained from the incoming request

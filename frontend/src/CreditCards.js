@@ -79,28 +79,40 @@ class CreditCardForm extends React.Component {
     }
     async handleSubmit(event) {
         event.preventDefault();
-        console.log("Handle submit called, with name: " + this.state.value);
+        let id = "";
+       //If we are not using a pre-saved card, connect with stripe to obtain a card token
+        if (!this.state.useExisting) {
+           //Create the token via Stripe's API
+            let { token } = await this.props.stripe.createToken({ name: this.state.name });
 
-        //retrieve the token via Stripe's API
-        let { token } = await this.props.stripe.createToken({ name: this.state.value });
-        if (token == null) {
-            console.log("invalid token");
-            this.setState({ status: FAILEDSTATE });
-            return;
+            if (token == null) {
+                console.log("invalid token");
+                this.setState({ status: FAILEDSTATE });
+                return;
+            }
+            id = token.id;
         }
-
-        let response = await fetch("/charge", {
+        //Create the request, then send it to the back-end
+        let response = await fetch("/users/charge", {
             method: "POST",
-            headers: { "Content-Type": "text/plain" },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                token: token.id,
-                operation: this.props.operation,
+                token: id,
+                customer_id: this.props.user,
+                product_id: this.props.productid,
+                sell_price: this.props.price,
+                rememberCard: this.state.remember !== undefined,
+                useExisting: this.state.useExisting
             })
         });
-        console.log(response.ok);
+        //If response is ok, consider the operation a success
         if (response.ok) {
             console.log("Purchase Complete!");
             this.setState({ status: SUCCESSSTATE });
+        } else {
+            this.setState({ status: FAILEDSTATE });
+
+
         }
     }
     render() {
