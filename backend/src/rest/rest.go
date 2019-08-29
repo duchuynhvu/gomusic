@@ -23,20 +23,12 @@ func RunAPIWithHandler(address string, h HandlerInterface) error {
 	//r.Use(MyCustomLogger())
 	r.GET("/products", h.GetProducts)
 	r.GET("/promos", h.GetPromos)
-	/*
-		//post user sign in
-		r.POST("/user/signin", h.SignIn)
-		//post user sign out
-		r.POST("/user/:id/signout", h.SignOut)
-		//get user orders
-		r.GET("/user/:id/orders", h.GetOrders)
-		//post purchase charge
-		r.POST("/user/charge", h.Charge)
-	*/
+
 	userGroup := r.Group("/user")
 	{
-		userGroup.POST("/:id/signout", h.SignOut)
+		userGroup.GET("/:id", h.GetCustomerByID)
 		userGroup.GET("/:id/orders", h.GetOrders)
+		userGroup.POST("/:id/signout", h.SignOut)
 	}
 	usersGroup := r.Group("/users")
 	{

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"models"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -24,17 +24,17 @@ func NewORM(dbname, con string) (*DBORM, error) {
 
 //GetAllProducts returns all of the products
 func (db *DBORM) GetAllProducts() (products []models.Product, err error) {
-	return products, db.Find(&products).Error
+	return products, db.Table("products").Scan(&products).Error
 }
 
 //GetPromos returns all of the promotions
 func (db *DBORM) GetPromos() (products []models.Product, err error) {
-	return products, db.Where("promotion IS NOT NULL").Find(&products).Error
+	return products, db.Table("products").Where("promotion <> ?", 0).Scan(&products).Error
 }
 
 //GetCustomerByName returns the customer's information
 func (db *DBORM) GetCustomerByName(firstname, lastname string) (customer models.Customer, err error) {
-	return customer, db.Where(&models.Customer{FirstName: firstname, LastName: lastname}).Find(&customer).Error
+	return customer, db.Where(&models.Customer{FirstName: firstname, LastName: lastname}).Scan(&customer).Error
 }
 
 //GetCustomerByID retrieve a customer by customer ID
@@ -44,7 +44,7 @@ func (db *DBORM) GetCustomerByID(id int) (customer models.Customer, err error) {
 
 //GetProduct retrieve a product by product ID
 func (db *DBORM) GetProduct(id int) (product models.Product, err error) {
-	return product, db.First(&product, id).Error
+	return product, db.Table("products").First(&product, id).Error
 }
 
 //AddUser - add user
@@ -52,8 +52,9 @@ func (db *DBORM) AddUser(customer models.Customer) (models.Customer, error) {
 	//pass received password by reference so that we can change it to its hashed version
 	hashPassword(&customer.Pass)
 	customer.LoggedIn = true
+	err := db.Create(&customer).Error
 	customer.Pass = ""
-	return customer, db.Create(&customer).Error
+	return customer, err
 }
 
 //SignInUser - user sign in
@@ -61,7 +62,7 @@ func (db *DBORM) SignInUser(email, pass string) (customer models.Customer, err e
 	//obtain a *gorm.DB object representing our customer's row
 	result := db.Table("Customers").Where(&models.Customer{Email: email})
 	//retrieve the data for the customer with the passed email
-	err = result.First(&customer).Error
+	err = result.Scan(&customer).Error
 	if err != nil {
 		return customer, err
 	}
@@ -78,7 +79,7 @@ func (db *DBORM) SignInUser(email, pass string) (customer models.Customer, err e
 		return customer, err
 	}
 	//return the new customer row
-	return customer, result.Find(&customer).Error
+	return customer, result.Scan(&customer).Error
 }
 
 //SignOutUserByID - sign out user by Id
@@ -90,7 +91,7 @@ func (db DBORM) SignOutUserByID(id int) error {
 		},
 	}
 	//update the customer row to reflect the fact that the customer is not logged in
-	return db.Table("Customer").Where(&customer).Update("loggedin", 0).Error
+	return db.Table("Customers").Where(&customer).Update("loggedin", 0).Error
 }
 
 //GetCustomerOrdersByID - get customer orders by ID
@@ -112,7 +113,7 @@ func (db *DBORM) GetCreditCardCID(id int) (string, error) {
 		models.Customer
 		CCID string `gorm:"column:cc_customerid"`
 	}{}
-	return customerWithCCID.CCID, db.First(&customerWithCCID, id).Error
+	return customerWithCCID.CCID, db.Table("customers").Where(&customerWithCCID, id).Scan(&customerWithCCID).Error
 }
 
 //SaveCreditCardForCustomer - save the credit card information for the customer

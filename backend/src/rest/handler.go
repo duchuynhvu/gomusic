@@ -2,6 +2,7 @@ package rest
 
 import (
 	"dblayer"
+	"fmt"
 	"log"
 	"models"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 
 //HandlerInterface interface
 type HandlerInterface interface {
+	GetCustomerByID(c *gin.Context)
 	GetProducts(c *gin.Context)
 	GetPromos(c *gin.Context)
 	AddUser(c *gin.Context)
@@ -31,7 +33,7 @@ type Handler struct {
 
 //NewHandler - constructor with params
 func NewHandler(dbtype, constring string) (HandlerInterface, error) {
-	db, err := dblayer.NewORM(dbtype, constring)
+	db, err := dblayer.NewORM(dbtype, constring+"?charset=utf8&parseTime=True")
 	if err != nil {
 		return nil, err
 	}
@@ -45,6 +47,26 @@ func NewHandlerWithDB(db dblayer.DBLayer) HandlerInterface {
 	return &Handler{db: db}
 }
 
+//GetCustomerByID - get customer by id
+func (h *Handler) GetCustomerByID(c *gin.Context) {
+	if h.db == nil {
+		return
+	}
+	p := c.Param("id")
+	id, err := strconv.Atoi(p)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+	customer, err := h.db.GetCustomerByID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	customer.Pass = ""
+	c.JSON(http.StatusOK, customer)
+}
+
 //GetProducts will retrieve a Handler pointer and
 //return a list of all products to the client
 func (h *Handler) GetProducts(c *gin.Context) {
@@ -56,6 +78,7 @@ func (h *Handler) GetProducts(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	fmt.Printf("Found %d products\n", len(products))
 	c.JSON(http.StatusOK, products)
 }
 
@@ -173,13 +196,17 @@ func (h *Handler) Charge(c *gin.Context) {
 	}{}
 	//parse the incoming JSON payload
 	err := c.ShouldBindJSON(&request)
+	log.Printf("request: %+v \n", request)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, request)
 		return
 	}
-	//declare the stripe API key
-	stripe.Key = "pk_test_LwL4RUtinpP3PXzYirX2jNfR"
-	//create the object to take information about our transaction
+	// Set your secret key: remember to change this to your live secret key in production
+	// Keys can be obtained from: https://dashboard.stripe.com/account/apikeys
+	// They key below is just for testing
+	stripe.Key = "sk_test_NA4BTh8j2IJxqVn3lImdIdEZ00rLr93apK"
+	//test cards available at:	https://stripe.com/docs/testing#cards
+	//setting charge parameters
 	chargeP := &stripe.ChargeParams{
 		//the price we obtained from the incoming request
 		Amount: stripe.Int64(int64(request.Price)),
@@ -190,7 +217,7 @@ func (h *Handler) Charge(c *gin.Context) {
 	}
 	//initialize the stripe customer ID string
 	stripeCustomerID := ""
-	//if the request expects using an existing card
+	//Either remembercard or use exeisting should be enabled but not both
 	if request.UseExisting {
 		log.Println("Getting credit card id...")
 		//this is a new method which retrieve the stripe customer id from the database
@@ -209,14 +236,14 @@ func (h *Handler) Charge(c *gin.Context) {
 			return
 		}
 		stripeCustomerID = customer.ID
-	}
-	// if the request asks to remember the card
-	if request.Remember {
-		//save the stripe customer id, and link it to the actual customer id in our database
-		err = h.db.SaveCreditCardForCustomer(request.CustomerID, stripeCustomerID)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
+		// if the request asks to remember the card
+		if request.Remember {
+			//save the stripe customer id, and link it to the actual customer id in our database
+			err = h.db.SaveCreditCardForCustomer(request.CustomerID, stripeCustomerID)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
 		}
 	}
 
