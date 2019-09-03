@@ -32,6 +32,11 @@ func (db *DBORM) GetPromos() (products []models.Product, err error) {
 	return products, db.Table("products").Where("promotion <> ?", 0).Scan(&products).Error
 }
 
+//GetAllCustomers returns all of the customers
+func (db *DBORM) GetAllCustomers() (customers []models.Customer, err error) {
+	return customers, db.Table("customers").Scan(&customers).Error
+}
+
 //GetCustomerByName returns the customer's information
 func (db *DBORM) GetCustomerByName(firstname, lastname string) (customer models.Customer, err error) {
 	return customer, db.Where(&models.Customer{FirstName: firstname, LastName: lastname}).Scan(&customer).Error
@@ -39,12 +44,12 @@ func (db *DBORM) GetCustomerByName(firstname, lastname string) (customer models.
 
 //GetCustomerByID retrieve a customer by customer ID
 func (db *DBORM) GetCustomerByID(id int) (customer models.Customer, err error) {
-	return customer, db.First(&customer, id).Error
+	return customer, db.Table("customers").Where("ID = ?", id).Scan(&customer).Error
 }
 
 //GetProduct retrieve a product by product ID
 func (db *DBORM) GetProduct(id int) (product models.Product, err error) {
-	return product, db.Table("products").First(&product, id).Error
+	return product, db.Table("products").Where("ID = ?", id).Scan(&product).Error
 }
 
 //AddUser - add user
@@ -118,7 +123,7 @@ func (db *DBORM) GetCreditCardCID(id int) (string, error) {
 
 //SaveCreditCardForCustomer - save the credit card information for the customer
 func (db *DBORM) SaveCreditCardForCustomer(id int, ccid string) error {
-	result := db.Table("customers").Where("id=?", id)
+	result := db.Table("customers").Where("ID = ?", id)
 	return result.Update("cc_customerid", ccid).Error
 }
 

@@ -30,7 +30,7 @@ type Customer struct {
 	Email     string  `gorm:"column:email" json:"email"`
 	Pass      string  `json:"password"`
 	LoggedIn  bool    `gorm:"column:loggedin" json:"loggedin"`
-	Orders    []Order `gorm:"foreignkey:CustomerID" json:"orders"`
+	Orders    []Order `json:"orders"`
 }
 
 //TableName declares table name

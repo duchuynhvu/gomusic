@@ -9,7 +9,7 @@ import (
 
 //RunAPI - app entry point
 func RunAPI(address string) error {
-	h, err := NewHandler("mysql", "root:secret@tcp(localhost:3306)/gomusic")
+	h, err := NewHandler("mysql", "root:secret@/gomusic")
 	if err != nil {
 		return err
 	}
@@ -35,6 +35,7 @@ func RunAPIWithHandler(address string, h HandlerInterface) error {
 		usersGroup.POST("/charge", h.Charge)
 		usersGroup.POST("/signin", h.SignIn)
 		usersGroup.POST("", h.AddUser)
+		usersGroup.GET("", h.GetCustomers)
 	}
 	r.Use(static.ServeRoot("/", "../public/build"))
 	return r.Run(address)

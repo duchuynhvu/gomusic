@@ -12,6 +12,7 @@ var ErrINVALIDPASSWORD = errors.New("Invalid password")
 type DBLayer interface {
 	GetAllProducts() ([]models.Product, error)
 	GetPromos() ([]models.Product, error)
+	GetAllCustomers() ([]models.Customer, error)
 	GetCustomerByName(string, string) (models.Customer, error)
 	GetCustomerByID(int) (models.Customer, error)
 	GetProduct(int) (models.Product, error)

@@ -18,6 +18,7 @@ import (
 type HandlerInterface interface {
 	GetCustomerByID(c *gin.Context)
 	GetProducts(c *gin.Context)
+	GetCustomers(c *gin.Context)
 	GetPromos(c *gin.Context)
 	AddUser(c *gin.Context)
 	SignIn(c *gin.Context)
@@ -33,7 +34,7 @@ type Handler struct {
 
 //NewHandler - constructor with params
 func NewHandler(dbtype, constring string) (HandlerInterface, error) {
-	db, err := dblayer.NewORM(dbtype, constring+"?charset=utf8&parseTime=True")
+	db, err := dblayer.NewORM(dbtype, constring+"?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
 		return nil, err
 	}
@@ -93,6 +94,19 @@ func (h *Handler) GetPromos(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, promos)
+}
+
+//GetCustomers return a list of customers
+func (h *Handler) GetCustomers(c *gin.Context) {
+	if h == nil {
+		return
+	}
+	customers, err := h.db.GetAllCustomers()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, customers)
 }
 
 //SignIn post user sign in
@@ -236,8 +250,11 @@ func (h *Handler) Charge(c *gin.Context) {
 			return
 		}
 		stripeCustomerID = customer.ID
+
+		log.Printf("Remember? %t", request.Remember)
 		// if the request asks to remember the card
 		if request.Remember {
+			log.Printf("Getting CCID: %s", stripeCustomerID)
 			//save the stripe customer id, and link it to the actual customer id in our database
 			err = h.db.SaveCreditCardForCustomer(request.CustomerID, stripeCustomerID)
 			if err != nil {
