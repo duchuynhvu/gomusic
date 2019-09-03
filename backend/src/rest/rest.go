@@ -29,6 +29,7 @@ func RunAPIWithHandler(address string, h HandlerInterface) error {
 		userGroup.GET("/:id", h.GetCustomerByID)
 		userGroup.GET("/:id/orders", h.GetOrders)
 		userGroup.POST("/:id/signout", h.SignOut)
+		userGroup.DELETE("/:id", h.DeleteUser)
 	}
 	usersGroup := r.Group("/users")
 	{

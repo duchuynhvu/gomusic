@@ -127,6 +127,12 @@ func (db *DBORM) SaveCreditCardForCustomer(id int, ccid string) error {
 	return result.Update("cc_customerid", ccid).Error
 }
 
+//DeleteUser delete the user by id
+func (db *DBORM) DeleteUser(id int) error {
+	// return db.Delete(models.Customer{}, "ID = ?", id).Error
+	return db.Table("customers").Where("ID = ?", id).Delete(&models.Customer{}).Error
+}
+
 func hashPassword(s *string) error {
 	if s == nil {
 		return errors.New("Reference provided for hashing password is nil")

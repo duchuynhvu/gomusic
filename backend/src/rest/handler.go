@@ -21,6 +21,7 @@ type HandlerInterface interface {
 	GetCustomers(c *gin.Context)
 	GetPromos(c *gin.Context)
 	AddUser(c *gin.Context)
+	DeleteUser(c *gin.Context)
 	SignIn(c *gin.Context)
 	SignOut(c *gin.Context)
 	GetOrders(c *gin.Context)
@@ -46,6 +47,24 @@ func NewHandler(dbtype, constring string) (HandlerInterface, error) {
 //NewHandlerWithDB - contructor with db
 func NewHandlerWithDB(db dblayer.DBLayer) HandlerInterface {
 	return &Handler{db: db}
+}
+
+//DeleteUser delete the user
+func (h *Handler) DeleteUser(c *gin.Context) {
+	if h.db == nil {
+		return
+	}
+	p := c.Param("id")
+	id, err := strconv.Atoi(p)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+	err = h.db.DeleteUser(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
 }
 
 //GetCustomerByID - get customer by id

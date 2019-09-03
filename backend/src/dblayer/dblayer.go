@@ -23,4 +23,5 @@ type DBLayer interface {
 	AddOrder(models.Order) error
 	GetCreditCardCID(int) (string, error)
 	SaveCreditCardForCustomer(int, string) error
+	DeleteUser(int) error
 }
