@@ -1,0 +1,205 @@
+{
+	"variables": [],
+	"info": {
+		"name": "GOLANG-TRAINING",
+		"_postman_id": "5e3e7cf7-2249-d79d-11bf-10de9cf52a60",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/user/1/orders",
+			"request": {
+				"url": "http://localhost:8000/user/1/orders",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/user/2",
+			"request": {
+				"url": "http://localhost:8000/user/2",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/user/6",
+			"request": {
+				"url": "http://localhost:8000/user/6",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/users",
+			"request": {
+				"url": "http://localhost:8000/users",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/users",
+			"request": {
+				"url": "http://localhost:8000/users",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"firstname\": \"Test\",\n\t\"lastname\": \"Vu\",\n\t\"email\": \"testvu@test.com\",\n\t\"password\": \"secret\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/user/2/signout",
+			"request": {
+				"url": "http://localhost:8000/user/2/signout",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/users/signin",
+			"request": {
+				"url": "http://localhost:8000/users/signin",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"Email\": \"linhnguyen@test.com\",\n\t\"Password\": \"secret\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/users/charge",
+			"request": {
+				"url": "http://localhost:8000/users/charge",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"CustomerID\": 2,\n    \"ProductID\": 1,\n    \"Price\": 600,\n    \"Token\": \"tok_createDispute\",\n    \"RememberCard\": true\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/promos",
+			"request": {
+				"url": "http://localhost:8000/promos",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/products",
+			"request": {
+				"url": "http://localhost:8000/products",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
